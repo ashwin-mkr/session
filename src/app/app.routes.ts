@@ -1,11 +1,17 @@
 import { Routes } from '@angular/router';
-import { StartSession } from './start-session/start-session';
-import { SessionList } from './session-list/session-list';
-import { LiveAuction } from './live-auction/live-auction';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/StartSession', pathMatch: 'full' },
-  { path: 'StartSession', component: StartSession },
-  { path: 'SessionList', component: SessionList },
-  { path: 'LiveAuction/:sessionId/:type', component: LiveAuction }
+  { path: '', redirectTo: '/create-session', pathMatch: 'full' },
+  { 
+    path: 'create-session', 
+    loadComponent: () => import('./components/create-session/create-session.component').then(m => m.CreateSessionComponent)
+  },
+  { 
+    path: 'sessions', 
+    loadComponent: () => import('./components/session-list/session-list.component').then(m => m.SessionListComponent)
+  },
+  { 
+    path: 'auction/:sessionId/:type', 
+    loadComponent: () => import('./components/live-auction/live-auction.component').then(m => m.LiveAuctionComponent)
+  }
 ];

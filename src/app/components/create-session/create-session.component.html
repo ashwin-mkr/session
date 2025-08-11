@@ -1,0 +1,75 @@
+<div class="create-session-container">
+  <div class="session-card">
+    <div class="card-header">
+      <h2>🚀 Create New Auction Session</h2>
+      <p>Set up a new auction session for participants to join</p>
+    </div>
+
+    <form [formGroup]="sessionForm" (ngSubmit)="onSubmit()" class="session-form">
+      <div class="form-group">
+        <label for="sessionId">Session ID</label>
+        <input
+          id="sessionId"
+          type="text"
+          formControlName="sessionId"
+          placeholder="Enter unique session identifier"
+          [class.error]="getFieldError('sessionId')"
+        />
+        <div class="error-message" *ngIf="getFieldError('sessionId')">
+          {{ getFieldError('sessionId') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="type">Auction Type</label>
+        <select id="type" formControlName="type">
+          <option value="increasing">📈 Increasing Bid (Highest Wins)</option>
+          <option value="decreasing">📉 Decreasing Bid (Lowest Wins)</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          [disabled]="sessionForm.invalid || isCreating()"
+          class="create-btn"
+        >
+          <span *ngIf="!isCreating()">Create Session</span>
+          <span *ngIf="isCreating()" class="loading">
+            <span class="spinner"></span>
+            Creating...
+          </span>
+        </button>
+      </div>
+
+      <div class="messages">
+        <div *ngIf="successMessage()" class="success-message">
+          ✅ {{ successMessage() }}
+        </div>
+        <div *ngIf="errorMessage()" class="error-message">
+          ❌ {{ errorMessage() }}
+        </div>
+      </div>
+    </form>
+
+    <div class="info-section">
+      <h3>📋 Session Types</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-icon">📈</div>
+          <div class="info-content">
+            <h4>Increasing Bid</h4>
+            <p>Participants place higher bids. The highest bidder wins when time expires.</p>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">📉</div>
+          <div class="info-content">
+            <h4>Decreasing Bid</h4>
+            <p>Participants place lower bids. The lowest unique bidder wins when time expires.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

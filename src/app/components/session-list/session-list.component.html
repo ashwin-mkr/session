@@ -1,0 +1,86 @@
+<div class="session-list-container">
+  <div class="list-header">
+    <h2>🔴 Live Auction Sessions</h2>
+    <p>Join active sessions and start bidding!</p>
+    <button class="refresh-btn" (click)="loadSessions()" [disabled]="isLoading()">
+      <span [class.spinning]="isLoading()">🔄</span>
+      Refresh
+    </button>
+  </div>
+
+  <div class="sessions-grid" *ngIf="!isLoading() && sessions().length > 0">
+    <div class="session-card" *ngFor="let session of sessions()">
+      <div class="session-header">
+        <div class="session-info">
+          <h3>
+            {{ getSessionTypeIcon(session.type) }}
+            {{ session.sessionId }}
+          </h3>
+          <span class="session-type">{{ getSessionTypeLabel(session.type) }}</span>
+        </div>
+        <div class="session-status" [class]="session.status">
+          <span class="status-dot"></span>
+          {{ session.status || 'Active' }}
+        </div>
+      </div>
+
+      <div class="session-stats" *ngIf="session.highestBet || session.lowestBet || session.participantCount">
+        <div class="stat" *ngIf="session.highestBet">
+          <span class="stat-label">Highest Bid:</span>
+          <span class="stat-value">₹{{ session.highestBet }}</span>
+        </div>
+        <div class="stat" *ngIf="session.lowestBet">
+          <span class="stat-label">Lowest Bid:</span>
+          <span class="stat-value">₹{{ session.lowestBet }}</span>
+        </div>
+        <div class="stat" *ngIf="session.participantCount">
+          <span class="stat-label">Participants:</span>
+          <span class="stat-value">{{ session.participantCount }}</span>
+        </div>
+      </div>
+
+      <div class="join-section">
+        <div class="ticket-input">
+          <label for="ticket-{{ session.sessionId }}">Your Ticket ID</label>
+          <input
+            id="ticket-{{ session.sessionId }}"
+            type="text"
+            placeholder="Enter your ticket ID"
+            [(ngModel)]="ticketIds[session.sessionId]"
+            [class.valid]="isTicketIdValid(session.sessionId)"
+          />
+        </div>
+        <button
+          class="join-btn"
+          (click)="joinSession(session)"
+          [disabled]="!isTicketIdValid(session.sessionId)"
+        >
+          🎯 Join Auction
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading()">
+    <div class="loading-spinner"></div>
+    <p>Loading active sessions...</p>
+  </div>
+
+  <div class="empty-state" *ngIf="!isLoading() && sessions().length === 0 && !errorMessage()">
+    <div class="empty-icon">🎪</div>
+    <h3>No Active Sessions</h3>
+    <p>There are no active auction sessions at the moment.</p>
+    <button class="create-session-btn" (click)="router.navigate(['/create-session'])">
+      Create New Session
+    </button>
+  </div>
+
+  <div class="error-state" *ngIf="errorMessage()">
+    <div class="error-icon">⚠️</div>
+    <h3>Unable to Load Sessions</h3>
+    <p>{{ errorMessage() }}</p>
+    <button class="retry-btn" (click)="loadSessions()">
+      Try Again
+    </button>
+  </div>
+</div>

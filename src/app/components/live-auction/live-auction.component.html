@@ -1,0 +1,130 @@
+<div class="auction-container">
+  <div class="auction-header">
+    <button class="back-btn" (click)="goBack()">
+      ← Back to Sessions
+    </button>
+    <div class="session-info">
+      <h2>🎯 {{ sessionId() }}</h2>
+      <span class="auction-type">
+        {{ auctionType() === 'increasing' ? '📈 Highest Bid Wins' : '📉 Lowest Bid Wins' }}
+      </span>
+    </div>
+    <div class="participant-info">
+      <span class="ticket-badge">🎫 {{ ticketId() }}</span>
+    </div>
+  </div>
+
+  <div class="auction-content" *ngIf="!errorMessage()">
+    <!-- Countdown Timer -->
+    <div class="countdown-section">
+      <div class="countdown-timer" [class.ending]="countdown() <= 30" [class.ended]="countdown() <= 0">
+        <div class="timer-display">
+          <span class="time">{{ formattedCountdown() }}</span>
+          <span class="label">{{ countdown() > 0 ? 'Time Remaining' : 'Auction Ended' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Current Bid Display -->
+    <div class="current-bid-section" *ngIf="currentBet()">
+      <div class="current-bid-card">
+        <h3>{{ auctionType() === 'increasing' ? 'Highest Bid' : 'Lowest Bid' }}</h3>
+        <div class="bid-amount">₹{{ currentBet()?.amount }}</div>
+        <div class="bid-holder">by {{ currentBet()?.ticketId }}</div>
+      </div>
+    </div>
+
+    <!-- Betting Form -->
+    <div class="betting-section" *ngIf="isAuctionActive()">
+      <div class="bet-form">
+        <h3>Place Your Bid</h3>
+        <div class="amount-input">
+          <span class="currency">₹</span>
+          <input
+            type="number"
+            [(ngModel)]="betAmount"
+            placeholder="Enter amount"
+            min="1"
+            [class.invalid]="betAmount() && !isBetValid()"
+          />
+        </div>
+        <div class="validation-message" *ngIf="getBetValidationMessage()">
+          {{ getBetValidationMessage() }}
+        </div>
+        <button
+          class="place-bet-btn"
+          (click)="placeBet()"
+          [disabled]="!isBetValid() || isPlacingBet()"
+        >
+          <span *ngIf="!isPlacingBet()">🎯 Place Bid</span>
+          <span *ngIf="isPlacingBet()" class="loading">
+            <span class="spinner"></span>
+            Placing Bid...
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Winner Display -->
+    <div class="winner-section" *ngIf="winner() && countdown() <= 0">
+      <div class="winner-card">
+        <div class="winner-icon">🏆</div>
+        <h3>Auction Winner</h3>
+        <div class="winner-ticket">{{ winner() }}</div>
+        <div class="celebration">🎉 Congratulations! 🎉</div>
+      </div>
+    </div>
+
+    <!-- Spinning Wheel -->
+    <div class="wheel-section" *ngIf="allBets().length > 0 && countdown() <= 0">
+      <div class="wheel-container">
+        <div 
+          class="wheel" 
+          [style.transform]="'rotate(' + wheelRotation() + 'deg)'"
+          [class.spinning]="isSpinning()"
+        >
+          <div 
+            class="wheel-segment" 
+            *ngFor="let bet of allBets(); let i = index"
+            [style.transform]="'rotate(' + (i * (360 / allBets().length)) + 'deg)'"
+          >
+            <span class="segment-text">{{ bet.ticketId }}</span>
+          </div>
+        </div>
+        <div class="wheel-pointer"></div>
+      </div>
+    </div>
+
+    <!-- Bets History -->
+    <div class="bets-section" *ngIf="allBets().length > 0">
+      <h3>Recent Bets</h3>
+      <div class="bets-list">
+        <div class="bet-item" *ngFor="let bet of allBets().slice(-5)">
+          <span class="bet-ticket">{{ bet.ticketId }}</span>
+          <span class="bet-amount">₹{{ bet.amount }}</span>
+          <span class="bet-time">{{ bet.timestamp }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="messages">
+      <div class="success-message" *ngIf="successMessage()">
+        ✅ {{ successMessage() }}
+      </div>
+      <div class="error-message" *ngIf="errorMessage()">
+        ❌ {{ errorMessage() }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-state" *ngIf="errorMessage()">
+    <div class="error-icon">⚠️</div>
+    <h3>Unable to Load Auction</h3>
+    <p>{{ errorMessage() }}</p>
+    <button class="retry-btn" (click)="goBack()">
+      Return to Sessions
+    </button>
+  </div>
+</div>
