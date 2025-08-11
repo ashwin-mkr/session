@@ -1,0 +1,15 @@
+<!-- start-session.component.html -->
+<form [formGroup]="form" (ngSubmit)="startSession()">
+  <label>Session ID: <input formControlName="sessionId" /></label>
+  <!-- <label>Duration (min): <input type="number" formControlName="durationMinutes" /></label> -->
+  <label>
+    Type:
+    <select formControlName="type">
+      <option value="increasing">Increasing</option>
+      <option value="decreasing">Decreasing</option>
+    </select>
+  </label>
+ <button type="submit" [disabled]="form.invalid || isStarting">
+    {{ isStarting ? 'Starting...' : 'Start Session' }}
+  </button>
+</form>

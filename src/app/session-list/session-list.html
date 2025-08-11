@@ -1,0 +1,27 @@
+<h2>Live Sessions</h2>
+
+<ul *ngIf="sessions.length > 0; else noSessions">
+  <li *ngFor="let session of sessions">
+    <strong>🔴 {{ session.sessionId }}</strong> ({{ session.type }})  
+    <span class="status">Status: {{ session.status || 'Active' }}</span>
+
+    <div class="join-form">
+      <input
+        type="text"
+        placeholder="Enter Ticket ID"
+        [(ngModel)]="ticketIds[session.sessionId]"
+      />
+      <button
+        (click)="join(session)"
+        [disabled]="!ticketIds[session.sessionId]"
+      >
+        Join
+      </button>
+    </div>
+  </li>
+</ul>
+
+<ng-template #noSessions>
+  <p>No active sessions at the moment.</p>
+</ng-template>
+<button (click)="ngOnInit()">🔄 Refresh Sessions</button>

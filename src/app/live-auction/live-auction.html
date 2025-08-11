@@ -1,0 +1,52 @@
+<div class="auction-container" *ngIf="sessionId && type && ticketId; else missingInfo">
+  <h2>Auction Session</h2>
+  <p><strong>Session ID:</strong> {{ sessionId }}</p>
+  <p><strong>Type:</strong> {{ type }}</p>
+  <p><strong>Ticket ID:</strong> {{ ticketId }}</p>
+
+  <div class="countdown" [class.ended]="countdown <= 0">
+    <h3>Countdown: {{ countdown }}s</h3>
+  </div>
+
+  <div class="bet-form">
+    <input type="number" [(ngModel)]="betAmount" placeholder="Enter amount" />
+    <button 
+      [disabled]="!betAmount || (!debugMode && countdown <= 0)" 
+      (click)="placeBet()">
+      Place Bet
+    </button>
+  </div>
+
+
+
+<div class="wheel-box">
+  <div class="wheel" [style.transform]="'rotate(' + rotation + 'deg)'" [class.spinning]="spinning">
+    <div class="segment" *ngFor="let bet of allBets; let i = index">
+      {{ bet.ticketId }}
+    </div>
+  </div>
+</div>
+    
+
+  <div *ngIf="winner" class="winner-display">
+    <h3>Winner: {{ winner }}</h3>
+  </div>
+
+  <div class="bets">
+    <h4>All Bets</h4>
+    <ul>
+      <li *ngFor="let bet of allBets">
+        {{ bet.ticketId }} - ₹{{ bet.amount }}
+      </li>
+    </ul>
+  </div>
+
+  <!-- Graph (optional): Replace this with actual graph component if needed -->
+  <div class="graph">
+    <h4>Graph Placeholder</h4>
+  </div>
+</div>
+
+<ng-template #missingInfo>
+  <div class="error">Missing session or ticket information.</div>
+</ng-template>
